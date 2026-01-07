@@ -25,21 +25,17 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<com.halt.medtracker.medication_tracker_api.dto.ApiResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest request) {
         
-        // 1. Authenticate user (Checks password hash automatically)
+        // Checks password hash automatically
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
-
-        // 2. Set Context
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // 3. Generate Token
         String token = jwtTokenProvider.generateToken(authentication);
 
-        // 4. Return Token
         return ResponseEntity.ok(ApiResponse.success(
                 "Login successful",
                 AuthResponse.builder().accessToken(token).build()
