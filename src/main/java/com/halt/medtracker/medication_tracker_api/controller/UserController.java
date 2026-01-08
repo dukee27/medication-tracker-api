@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/users")
-@RequiredArgsConstructor
+@RequiredArgsConstructor // this looks at final and automatically creates field for me here, not need of auto wiring
 // @PreAuthorize("hasRole('USER')")
 public class UserController {
 
