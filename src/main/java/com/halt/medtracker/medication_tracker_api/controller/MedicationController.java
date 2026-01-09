@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.halt.medtracker.medication_tracker_api.dto.ApiResponse;
 import com.halt.medtracker.medication_tracker_api.dto.request.CreateUserRequestDTO;
 import com.halt.medtracker.medication_tracker_api.entity.Medication;
+import com.halt.medtracker.medication_tracker_api.service.MedicationService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
