@@ -1,5 +1,7 @@
 package com.halt.medtracker.medication_tracker_api.service;
 
+import java.util.List;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -46,6 +48,39 @@ public class MedicationService {
         
         return medicationRepository.save(medication);
                                 
+    }
+
+    public List<Medication> getAllUserMedications(){
+        User user = getCurrentUser();
+        return medicationRepository.findByUserId(user.getId());
+    }
+
+    public List<Medication> searchUserMedications(String query){
+        User user = getCurrentUser();
+
+        if(query == null || query.isBlank()){
+            return getAllUserMedications();
+        }
+
+        return medicationRepository.findByUserIdAndNameContainingIgnoreCase(user.getId(),query);
+    }
+
+    public Medication getMedicationById(Long medId){
+        User user = getCurrentUser();
+
+        Medication med = medicationRepository.findById(medId)
+                        .orElseThrow(()->new RuntimeException("medication not found"));
+        
+        if(!med.getUser().getId().equals(user.getId())){
+            throw new RuntimeException("Unauthorized access to medication");
+        }
+        return med;
+    }
+
+    private User getCurrentUser(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByEmail(email)
+                                .orElseThrow(()->new UsernameNotFoundException("User not found"));
     }
 
 
