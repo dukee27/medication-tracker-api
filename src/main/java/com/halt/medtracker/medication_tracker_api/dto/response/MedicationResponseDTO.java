@@ -1,6 +1,9 @@
 package com.halt.medtracker.medication_tracker_api.dto.response;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import com.halt.medtracker.medication_tracker_api.constants.MedicationType;
 
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +11,20 @@ import lombok.Data;
 @Data
 @Builder   
 public class MedicationResponseDTO {
-    private Long medicationId;
-    private String medicationName;
-    private LocalDateTime createdAt;
+    private Long id;
+
+    private String name;       
+    private String brandName;
+    private String dosage;
+    private MedicationType type; 
+
+    private int quantityLeft;  
+    private boolean isActive;
+
+    private LocalDate expiryDate; 
+    private LocalDate startDate;
+
+    private String instructions;
+    private String doctorName;
+    private String imageUrl;
 }

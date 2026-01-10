@@ -17,6 +17,7 @@ public class Medication extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(nullable = false)
     private String name;
     private String brandName;
     private String dosage;
@@ -28,9 +29,14 @@ public class Medication extends BaseEntity {
     private int quantityLeft;
 
     private LocalDate expiryDate; 
+    private LocalDate startDate;
 
     private String doctorName;
+
+    @Column(columnDefinition = "Text")
     private String instructions;
-    private boolean isActive;
+
+    @Builder.Default
+    private boolean isActive = true;
     private String imageUrl;
 }
