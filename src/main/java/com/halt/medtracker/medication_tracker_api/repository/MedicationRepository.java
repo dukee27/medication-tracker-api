@@ -7,6 +7,5 @@ import com.halt.medtracker.medication_tracker_api.entity.Medication;
 
 @Repository
 public interface MedicationRepository extends JpaRepository<Medication,Long> {
-
     
 }

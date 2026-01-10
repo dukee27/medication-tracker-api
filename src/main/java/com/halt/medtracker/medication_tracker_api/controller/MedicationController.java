@@ -7,7 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.halt.medtracker.medication_tracker_api.dto.ApiResponse;
+import com.halt.medtracker.medication_tracker_api.dto.mapper.MedicationMapper;
+import com.halt.medtracker.medication_tracker_api.dto.request.CreateMedicationRequestDTO;
 import com.halt.medtracker.medication_tracker_api.dto.request.CreateUserRequestDTO;
+import com.halt.medtracker.medication_tracker_api.dto.response.MedicationResponseDTO;
 import com.halt.medtracker.medication_tracker_api.entity.Medication;
 import com.halt.medtracker.medication_tracker_api.service.MedicationService;
 
@@ -24,7 +27,7 @@ public class MedicationController {
 
     public ResponseEntity<ApiResponse<MedicationResponseDTO>> addMedication(
         @Valid @RequestBody CreateMedicationRequestDTO request){
-            Medication createMedication = medicationService.createMedication(request);
+            Medication createdMedication = medicationService.createMedication(request);
             MedicationResponseDTO medicationResponse = medicationMapper.toResponse(createdMedication);
             return ResponseEntity
                     .status(HttpStatus.CREATED)
