@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.halt.medtracker.medication_tracker_api.dto.ApiResponse;
 import com.halt.medtracker.medication_tracker_api.dto.mapper.MedicationMapper;
 import com.halt.medtracker.medication_tracker_api.dto.request.CreateMedicationRequestDTO;
-import com.halt.medtracker.medication_tracker_api.dto.request.CreateUserRequestDTO;
 import com.halt.medtracker.medication_tracker_api.dto.response.MedicationResponseDTO;
 import com.halt.medtracker.medication_tracker_api.entity.Medication;
 import com.halt.medtracker.medication_tracker_api.service.MedicationService;

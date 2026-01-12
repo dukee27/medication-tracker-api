@@ -1,7 +1,6 @@
 package com.halt.medtracker.medication_tracker_api.dto.response;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import com.halt.medtracker.medication_tracker_api.constants.MedicationType;
 
