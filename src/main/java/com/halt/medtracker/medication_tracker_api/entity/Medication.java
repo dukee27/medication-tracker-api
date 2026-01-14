@@ -1,5 +1,6 @@
 package com.halt.medtracker.medication_tracker_api.entity;
 
+import com.halt.medtracker.medication_tracker_api.constants.MedicationStatus;
 import com.halt.medtracker.medication_tracker_api.constants.MedicationType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,9 +26,13 @@ public class Medication extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MedicationType type;
 
+    @Enumerated(EnumType.STRING)
+    private MedicationStatus status;
+
     private int quantityTotal;
     private int quantityLeft;
 
+    private LocalDate endDate;
     private LocalDate expiryDate; 
     private LocalDate startDate;
 

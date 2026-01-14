@@ -1,5 +1,6 @@
 package com.halt.medtracker.medication_tracker_api.repository;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,17 +26,33 @@ public class MedicationSpecification {
             // get medication name
             if(filter.getMedicineName() != null && !filter.getMedicineName().isBlank()){
                 predicates.add(cb.like(
-                    cb.lower(root.get("medicineName")), "%" + filter.getMedicineName().toLowerCase() + "%"
+                    cb.lower(root.get("name")), "%" + filter.getMedicineName().toLowerCase() + "%"
                 ));
             }
 
             // get doctor name 
             if(filter.getPrescribedBy() != null && !filter.getPrescribedBy().isBlank()){
                 predicates.add(cb.like(
-                    cb.lower(root.get("prescribedBy")),"%" + filter.getPrescribedBy().toLowerCase() + "%"
+                    cb.lower(root.get("doctorName")),"%" + filter.getPrescribedBy().toLowerCase() + "%"
                 ));
             }
 
+            // if medication is active or not
+            if(filter.getIsActive() != null){
+                predicates.add(cb.equal(root.get("isActive"),filter.getIsActive()));
+            }
+            
+            // med status 
+            if(filter.getStatus() != null){
+                predicates.add(cb.equal(root.get("status"),filter.getStatus()));
+            }
+
+            // meds that crossed expiry date
+            if(Boolean.TRUE.equals(filter.getIsExpired())){
+                predicates.add(cb.lessThan(root.get("expiryDate"),LocalDate.now()));
+            }
+
+            
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
