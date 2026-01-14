@@ -52,7 +52,57 @@ public class MedicationSpecification {
                 predicates.add(cb.lessThan(root.get("expiryDate"),LocalDate.now()));
             }
 
-            
+            // due today
+            if(Boolean.TRUE.equals(filter.getIsDueToday())){
+                predicates.add(cb.lessThanOrEqualTo(root.get("startDate"),LocalDate.now()));
+                
+                // also checking for end date
+                Predicate noEndDate = cb.isNull(root.get("endDate"));
+                Predicate endDateInFuture = cb.greaterThanOrEqualTo(root.get("endDate"),LocalDate.now());
+                predicates.add(cb.or(noEndDate,endDateInFuture));
+            }
+
+            // low stock
+            if(Boolean.TRUE.equals(filter.getIsLowStock())){
+                predicates.add(cb.lessThanOrEqualTo(root.get("quantityLeft"), 5));
+            }
+
+            // date ranges
+            if (filter.getStartDateFrom() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("startDate"), filter.getStartDateFrom()));
+            }
+            if (filter.getStartDateTo() != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("startDate"), filter.getStartDateTo()));
+            }
+            if (filter.getEndDateFrom() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("endDate"), filter.getEndDateFrom())); 
+            }
+            if (filter.getEndDateTo() != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("endDate"), filter.getEndDateTo())); 
+            }
+
+            //quantity threshold
+            if (filter.getQuantityLessThan() != null) {
+                predicates.add(cb.lessThan(root.get("quantityLeft"), filter.getQuantityLessThan()));
+            }
+            if (filter.getQuantityGreaterThan() != null) {
+                predicates.add(cb.greaterThan(root.get("quantityLeft"), filter.getQuantityGreaterThan()));
+            }
+
+            // sorting
+            if (filter.getSortBy() != null && !filter.getSortBy().isBlank()) {
+               
+                String sortField = filter.getSortBy();
+                if(sortField.equals("medicineName")) sortField = "name";
+                if(sortField.equals("prescribedBy")) sortField = "doctorName";
+
+                if ("ASC".equalsIgnoreCase(filter.getSortOrder())) {
+                    query.orderBy(cb.asc(root.get(sortField)));
+                } else {
+                    query.orderBy(cb.desc(root.get(sortField)));
+                }
+            }
+
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
