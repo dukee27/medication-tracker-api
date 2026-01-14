@@ -51,6 +51,12 @@ public class MedicationSpecification {
             if(Boolean.TRUE.equals(filter.getIsExpired())){
                 predicates.add(cb.lessThan(root.get("expiryDate"),LocalDate.now()));
             }
+            if (filter.getExpiryDateBefore() != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("expiryDate"), filter.getExpiryDateBefore()));
+                
+                // dont show the expired ones
+                predicates.add(cb.greaterThanOrEqualTo(root.get("expiryDate"), LocalDate.now()));
+            }
 
             // due today
             if(Boolean.TRUE.equals(filter.getIsDueToday())){

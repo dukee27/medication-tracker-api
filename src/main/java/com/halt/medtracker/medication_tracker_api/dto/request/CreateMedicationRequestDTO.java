@@ -36,4 +36,5 @@ public class CreateMedicationRequestDTO {
 
     @NotBlank(message = "start date is required")
     private LocalDate startDate;
+    private LocalDate endDate;
 }

@@ -33,6 +33,8 @@ public class MedicationFilterRequest {
     
     private String sortBy;              // "medicineName", "startDate", "expiryDate"
     private String sortOrder;           // "ASC", "DESC"
+
+    private LocalDate expiryDateBefore;
     
     // adding pagination also
     private Integer page;

@@ -3,6 +3,7 @@ package com.halt.medtracker.medication_tracker_api.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.beans.factory.BeanRegistry.Spec;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.halt.medtracker.medication_tracker_api.dto.request.CreateMedicationRequestDTO;
 import com.halt.medtracker.medication_tracker_api.dto.response.MedicationResponseDTO;
@@ -52,6 +54,7 @@ public class MedicationService {
                                 .imageUrl(request.getImageUrl())
                                 .expiryDate(request.getExpiryDate())
                                 .startDate(request.getStartDate())
+                                .endDate(request.getEndDate()) 
                                 .isActive(true) 
                                 .build();
         
@@ -82,12 +85,12 @@ public class MedicationService {
                                 .orElseThrow(()->new UsernameNotFoundException("User not found"));
     }
 
+    @Transactional(readOnly = true)
     public Page<MedicationResponseDTO> filterMedication(Long userId, MedicationFilterRequest filter){
-         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-  
-        User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        if (!userRepository.existsById(userId)) {
+            throw new UsernameNotFoundException("User not found");
+        }
 
         Specification<Medication> spec = MedicationSpecification.dynamicFilter(userId,filter);
 
@@ -100,6 +103,58 @@ public class MedicationService {
         Page<Medication>  medications = medicationRepository.findAll(spec,pageable);
 
         return medications.map(this::toResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MedicationResponseDTO> getMedicationsForToday(Long userId) {
+        MedicationFilterRequest filter = MedicationFilterRequest.builder()
+                .isActive(true)
+                .isDueToday(true)
+                .isExpired(false)
+                .sortBy("startDate")
+                .sortOrder("ASC")
+                .build();
+
+        Specification<Medication> spec = MedicationSpecification.dynamicFilter(userId, filter);
+        
+        return medicationRepository.findAll(spec).stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<MedicationResponseDTO> getLowStockReport(Long userId){
+        MedicationFilterRequest filter = MedicationFilterRequest.builder()
+                .isActive(true)
+                .isLowStock(true)
+                .sortBy("startDate")
+                .sortOrder("ASC")
+                .build();
+        
+                Specification<Medication> spec = MedicationSpecification.dynamicFilter(userId, filter);
+        
+        return medicationRepository.findAll(spec).stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<MedicationResponseDTO> getExpiryReport(Long userId) {
+        
+        LocalDate DaysFromNow = LocalDate.now().plusDays(30);
+
+        MedicationFilterRequest filter = MedicationFilterRequest.builder()
+                .isActive(true)
+                .expiryDateBefore(DaysFromNow) 
+                .sortBy("expiryDate") 
+                .sortOrder("ASC")
+                .build();
+
+        Specification<Medication> spec = MedicationSpecification.dynamicFilter(userId, filter);
+
+        return medicationRepository.findAll(spec).stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     private MedicationResponseDTO toResponse(Medication med){
