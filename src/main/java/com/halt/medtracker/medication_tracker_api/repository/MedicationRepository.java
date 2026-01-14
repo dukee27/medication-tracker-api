@@ -12,10 +12,4 @@ import com.halt.medtracker.medication_tracker_api.entity.Medication;
 public interface MedicationRepository extends JpaRepository<Medication,Long>,JpaSpecificationExecutor<Medication>{
     // all medication of that user
     List<Medication> findByUserId(Long userId);
-    
-    // search by Name , case sensitive
-    List<Medication> findByUserIdAndNameContainingIgnoreCase(Long userId, String name);
-
-    //search by the type , ig we have to add more , whole filter box thingy
-    List<Medication> findByUserIdAndType(Long userId,String Type);
 }

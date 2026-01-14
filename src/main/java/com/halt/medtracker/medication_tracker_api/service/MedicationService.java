@@ -1,15 +1,24 @@
 package com.halt.medtracker.medication_tracker_api.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.halt.medtracker.medication_tracker_api.dto.request.CreateMedicationRequestDTO;
+import com.halt.medtracker.medication_tracker_api.dto.response.MedicationResponseDTO;
+import com.halt.medtracker.medication_tracker_api.dto.request.MedicationFilterRequest;
 import com.halt.medtracker.medication_tracker_api.entity.Medication;
 import com.halt.medtracker.medication_tracker_api.entity.User;
 import com.halt.medtracker.medication_tracker_api.repository.MedicationRepository;
+import com.halt.medtracker.medication_tracker_api.repository.MedicationSpecification;
 import com.halt.medtracker.medication_tracker_api.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -55,16 +64,6 @@ public class MedicationService {
         return medicationRepository.findByUserId(user.getId());
     }
 
-    public List<Medication> searchUserMedications(String query){
-        User user = getCurrentUser();
-
-        if(query == null || query.isBlank()){
-            return getAllUserMedications();
-        }
-
-        return medicationRepository.findByUserIdAndNameContainingIgnoreCase(user.getId(),query);
-    }
-
     public Medication getMedicationById(Long medId){
         User user = getCurrentUser();
 
@@ -83,5 +82,48 @@ public class MedicationService {
                                 .orElseThrow(()->new UsernameNotFoundException("User not found"));
     }
 
+    public Page<MedicationResponseDTO> filterMedication(Long userId, MedicationFilterRequest filter){
+         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
+  
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        Specification<Medication> spec = MedicationSpecification.dynamicFilter(userId,filter);
+
+        Pageable pageable = PageRequest.of(
+                filter.getPage() != null ? filter.getPage() : 0,
+                filter.getPageSize() != null ? filter.getPageSize() : 10,
+                Sort.by("startDate").descending()
+        );
+        
+        Page<Medication>  medications = medicationRepository.findAll(spec,pageable);
+
+        return medications.map(this::toResponse);
+    }
+
+    private MedicationResponseDTO toResponse(Medication med){
+        return MedicationResponseDTO.builder()
+                .id(med.getId())
+            
+                .name(med.getName())  
+                
+                .brandName(med.getBrandName())
+                .dosage(med.getDosage())
+                .type(med.getType())           
+                
+                .startDate(med.getStartDate())
+                .endDate(med.getEndDate())     
+                
+                .doctorName(med.getDoctorName()) 
+                
+                .isActive(med.isActive())
+                .quantityLeft(med.getQuantityLeft())
+                .expiryDate(med.getExpiryDate())
+                
+                .instructions(med.getInstructions()) 
+                .imageUrl(med.getImageUrl())         
+                
+                .build();
+    }
 }

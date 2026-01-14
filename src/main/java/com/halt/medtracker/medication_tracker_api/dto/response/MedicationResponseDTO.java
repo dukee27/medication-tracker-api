@@ -22,6 +22,7 @@ public class MedicationResponseDTO {
 
     private LocalDate expiryDate; 
     private LocalDate startDate;
+    private LocalDate endDate;
 
     private String instructions;
     private String doctorName;
