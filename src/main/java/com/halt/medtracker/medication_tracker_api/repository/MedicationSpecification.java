@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.springframework.data.jpa.domain.Specification;
 
+import com.halt.medtracker.medication_tracker_api.domain.medication.Medication;
 import com.halt.medtracker.medication_tracker_api.dto.request.MedicationFilterRequest;
-import com.halt.medtracker.medication_tracker_api.entity.Medication;
 
 import jakarta.persistence.criteria.Predicate;
 

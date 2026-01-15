@@ -1,6 +1,8 @@
-package com.halt.medtracker.medication_tracker_api.entity;
+package com.halt.medtracker.medication_tracker_api.domain.medication;
 
 import com.halt.medtracker.medication_tracker_api.constants.FrequencyType;
+import com.halt.medtracker.medication_tracker_api.domain.base.BaseEntity;
+
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalTime;

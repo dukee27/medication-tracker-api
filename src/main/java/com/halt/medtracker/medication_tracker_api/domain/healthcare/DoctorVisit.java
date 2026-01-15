@@ -1,9 +1,12 @@
-package com.halt.medtracker.medication_tracker_api.entity;
+package com.halt.medtracker.medication_tracker_api.domain.healthcare;
 
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import com.halt.medtracker.medication_tracker_api.domain.base.BaseEntity;
+import com.halt.medtracker.medication_tracker_api.domain.identity.User;
 
 @Entity
 @Data

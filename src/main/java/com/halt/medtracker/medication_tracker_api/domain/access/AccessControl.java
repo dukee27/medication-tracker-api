@@ -1,6 +1,9 @@
-package com.halt.medtracker.medication_tracker_api.entity;
+package com.halt.medtracker.medication_tracker_api.domain.access;
 
 import com.halt.medtracker.medication_tracker_api.constants.RelationshipType;
+import com.halt.medtracker.medication_tracker_api.domain.base.BaseEntity;
+import com.halt.medtracker.medication_tracker_api.domain.identity.User;
+
 import jakarta.persistence.*;
 import lombok.*;
 

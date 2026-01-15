@@ -1,4 +1,4 @@
-package com.halt.medtracker.medication_tracker_api.entity;
+package com.halt.medtracker.medication_tracker_api.domain.identity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
+
+import com.halt.medtracker.medication_tracker_api.domain.base.BaseEntity;
 
 @Entity
 @Table(name="users")

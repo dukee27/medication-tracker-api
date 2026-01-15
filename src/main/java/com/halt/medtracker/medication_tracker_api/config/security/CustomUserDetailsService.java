@@ -1,6 +1,6 @@
 package com.halt.medtracker.medication_tracker_api.config.security;
 
-import com.halt.medtracker.medication_tracker_api.entity.User;
+import com.halt.medtracker.medication_tracker_api.domain.identity.User;
 import com.halt.medtracker.medication_tracker_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

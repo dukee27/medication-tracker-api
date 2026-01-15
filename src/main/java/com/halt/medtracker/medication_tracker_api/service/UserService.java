@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.halt.medtracker.medication_tracker_api.domain.identity.User;
 import com.halt.medtracker.medication_tracker_api.dto.request.CreateUserRequestDTO;
-import com.halt.medtracker.medication_tracker_api.entity.User;
 import com.halt.medtracker.medication_tracker_api.exception.UserAlreadyExistsException;
 import com.halt.medtracker.medication_tracker_api.repository.UserRepository;
 

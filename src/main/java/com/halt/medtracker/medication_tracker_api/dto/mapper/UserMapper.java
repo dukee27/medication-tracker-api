@@ -2,8 +2,8 @@ package com.halt.medtracker.medication_tracker_api.dto.mapper;
 
 import org.springframework.stereotype.Component;
 
+import com.halt.medtracker.medication_tracker_api.domain.identity.User;
 import com.halt.medtracker.medication_tracker_api.dto.response.UserResponseDTO;
-import com.halt.medtracker.medication_tracker_api.entity.User;
 
 @Component
 public class UserMapper {

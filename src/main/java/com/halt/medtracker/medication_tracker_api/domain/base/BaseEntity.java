@@ -1,4 +1,4 @@
-package com.halt.medtracker.medication_tracker_api.entity;
+package com.halt.medtracker.medication_tracker_api.domain.base;
 
 import jakarta.persistence.*;
 import lombok.Data;

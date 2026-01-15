@@ -13,11 +13,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.halt.medtracker.medication_tracker_api.domain.identity.User;
+import com.halt.medtracker.medication_tracker_api.domain.medication.Medication;
 import com.halt.medtracker.medication_tracker_api.dto.request.CreateMedicationRequestDTO;
 import com.halt.medtracker.medication_tracker_api.dto.response.MedicationResponseDTO;
 import com.halt.medtracker.medication_tracker_api.dto.request.MedicationFilterRequest;
-import com.halt.medtracker.medication_tracker_api.entity.Medication;
-import com.halt.medtracker.medication_tracker_api.entity.User;
 import com.halt.medtracker.medication_tracker_api.repository.MedicationRepository;
 import com.halt.medtracker.medication_tracker_api.repository.MedicationSpecification;
 import com.halt.medtracker.medication_tracker_api.repository.UserRepository;
