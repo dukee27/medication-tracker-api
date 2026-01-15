@@ -20,6 +20,6 @@ public class MedicationSchedule extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private FrequencyType frequency;
 
-    private LocalTime scheduleTime; // Fixed typo (was scheduleTIme)
-    private Integer dayOfWeek; // 1-7 for Mon-Sun
+    private LocalTime scheduleTime; 
+    private Integer dayOfWeek;
 }

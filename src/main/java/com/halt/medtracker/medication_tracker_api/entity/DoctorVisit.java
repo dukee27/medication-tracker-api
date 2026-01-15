@@ -20,16 +20,16 @@ public class DoctorVisit extends BaseEntity {
     private String doctorName;
     private String specialty;
     private String clinicName;
-    private String locationCoordinates; // Store as "lat,long" string
+    private String locationCoordinates;
 
     private LocalDateTime visitDate;
     private LocalDate nextFollowUpDate;
     private String diagnosis;
 
-    private Double consultationFee; // Fixed typo (was consultationFree)
+    private Double consultationFee; 
     private String prescriptionImageUrl;
 
-    @Lob // Large Object (Text)
-    @Column(columnDefinition = "TEXT") // Hint for MySQL
+    @Lob 
+    @Column(columnDefinition = "TEXT") 
     private String doctorNotes;
 }

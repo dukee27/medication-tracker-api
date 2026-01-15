@@ -17,10 +17,8 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true) // Handle BaseEntity fields correctly
+@EqualsAndHashCode(callSuper = true) 
 public class User extends BaseEntity {
-
-    // NOTE: 'id' is inherited from BaseEntity
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -41,5 +39,4 @@ public class User extends BaseEntity {
 
     private boolean isEmailVerified;
     
-    // createdAt and updatedAt are inherited!
 }

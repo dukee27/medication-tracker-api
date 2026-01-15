@@ -3,7 +3,6 @@ package com.halt.medtracker.medication_tracker_api.service;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.beans.factory.BeanRegistry.Spec;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

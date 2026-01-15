@@ -1,11 +1,11 @@
 package com.halt.medtracker.medication_tracker_api.entity;
 
 import jakarta.persistence.*;
-import lombok.Data; // Added Data for getters/setters in base
+import lombok.Data;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
-@Data // Generates getters/setters for id, createdAt, etc.
+@Data 
 public abstract class BaseEntity {
 
     @Id
@@ -19,7 +19,6 @@ public abstract class BaseEntity {
 
     private boolean isDeleted = false;
 
-    // AUTOMATION: Automatically set timestamps
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
