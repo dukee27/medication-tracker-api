@@ -32,7 +32,6 @@ public class Medication extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MedicationStatus status;
 
-    private int frequency;
     private int quantityTotal;
     private int quantityLeft;
 

@@ -1,12 +1,12 @@
-package com.halt.medtracker.medication_tracker_api.domain.medication;
+package com.halt.medtracker.medication_tracker_api.domain.healthcare;
 
-import com.halt.medtracker.medication_tracker_api.constants.RefillStatus;
+import java.time.LocalDate;
+
 import com.halt.medtracker.medication_tracker_api.domain.base.BaseEntity;
 import com.halt.medtracker.medication_tracker_api.domain.identity.User;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -17,24 +17,26 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Builder
 @Data
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class RefillRequest extends BaseEntity {
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper=false)
+public class Prescription extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id",nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "medication_id",nullable = false)
-    private Medication medication;
+    @JoinColumn(name = "doctor_visit_id", nullable = false)
+    private DoctorVisit doctorVisit;
 
-    private int requestedQuantity;
+    private LocalDate issuedDate;
 
-    @Enumerated(EnumType.STRING)
-    private RefillStatus status;
+    private boolean isActive;
 
+    @Column(columnDefinition = "TEXT")
+    private String generalInstructions;
 }
+
