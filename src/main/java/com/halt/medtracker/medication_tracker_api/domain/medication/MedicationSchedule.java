@@ -8,7 +8,8 @@ import lombok.*;
 import java.time.LocalTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

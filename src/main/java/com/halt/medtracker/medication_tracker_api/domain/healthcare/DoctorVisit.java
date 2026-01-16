@@ -9,7 +9,8 @@ import com.halt.medtracker.medication_tracker_api.domain.base.BaseEntity;
 import com.halt.medtracker.medication_tracker_api.domain.identity.User;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
