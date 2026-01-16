@@ -10,6 +10,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+//using getter and setter annotation is safer than using @data
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @Getter
