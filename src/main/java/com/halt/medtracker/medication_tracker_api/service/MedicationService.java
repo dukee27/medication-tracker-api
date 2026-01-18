@@ -32,13 +32,7 @@ public class MedicationService {
     private final UserRepository userRepository;
 
     public Medication createMedication(CreateMedicationRequestDTO request){
-
-        //current logged-in user's email from the JWT
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-
-  
-        User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        User currentUser = getCurrentUser();
                 
         Medication medication = Medication.builder()
                                 .user(currentUser)
@@ -85,13 +79,10 @@ public class MedicationService {
     }
 
     @Transactional(readOnly = true)
-    public Page<MedicationResponseDTO> filterMedication(Long userId, MedicationFilterRequest filter){
+    public Page<MedicationResponseDTO> filterMedication(MedicationFilterRequest filter){
 
-        if (!userRepository.existsById(userId)) {
-            throw new UsernameNotFoundException("User not found");
-        }
-
-        Specification<Medication> spec = MedicationSpecification.dynamicFilter(userId,filter);
+        User user = getCurrentUser();
+        Specification<Medication> spec = MedicationSpecification.dynamicFilter(user.getId(),filter);
 
         Pageable pageable = PageRequest.of(
                 filter.getPage() != null ? filter.getPage() : 0,
@@ -105,24 +96,9 @@ public class MedicationService {
     }
 
     @Transactional(readOnly = true)
-    public List<MedicationResponseDTO> getMedicationsForToday(Long userId) {
-        MedicationFilterRequest filter = MedicationFilterRequest.builder()
-                .isActive(true)
-                .isDueToday(true)
-                .isExpired(false)
-                .sortBy("startDate")
-                .sortOrder("ASC")
-                .build();
+    public List<MedicationResponseDTO> getLowStockReport(){
 
-        Specification<Medication> spec = MedicationSpecification.dynamicFilter(userId, filter);
-        
-        return medicationRepository.findAll(spec).stream()
-                .map(this::toResponse)
-                .toList();
-    }
-
-    @Transactional(readOnly = true)
-    public List<MedicationResponseDTO> getLowStockReport(Long userId){
+        User user = getCurrentUser();
         MedicationFilterRequest filter = MedicationFilterRequest.builder()
                 .isActive(true)
                 .isLowStock(true)
@@ -130,7 +106,7 @@ public class MedicationService {
                 .sortOrder("ASC")
                 .build();
         
-                Specification<Medication> spec = MedicationSpecification.dynamicFilter(userId, filter);
+                Specification<Medication> spec = MedicationSpecification.dynamicFilter(user.getId(), filter);
         
         return medicationRepository.findAll(spec).stream()
                 .map(this::toResponse)
@@ -138,8 +114,9 @@ public class MedicationService {
     }
 
     @Transactional(readOnly = true)
-    public List<MedicationResponseDTO> getExpiryReport(Long userId) {
+    public List<MedicationResponseDTO> getExpiryReport() {
         
+        User user = getCurrentUser();
         LocalDate DaysFromNow = LocalDate.now().plusDays(30);
 
         MedicationFilterRequest filter = MedicationFilterRequest.builder()
@@ -149,7 +126,7 @@ public class MedicationService {
                 .sortOrder("ASC")
                 .build();
 
-        Specification<Medication> spec = MedicationSpecification.dynamicFilter(userId, filter);
+        Specification<Medication> spec = MedicationSpecification.dynamicFilter(user.getId(), filter);
 
         return medicationRepository.findAll(spec).stream()
                 .map(this::toResponse)

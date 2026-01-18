@@ -64,6 +64,7 @@ public class MedicationController {
         return ResponseEntity.ok(ApiResponse.success("Search results", result));
     }
 
+    // gotta change all this 
     @GetMapping("/reports/today")
     public ResponseEntity<ApiResponse<List<MedicationResponseDTO>>> getMedicationsForToday() {
         Long userId = getAuthenticatedUserId();
