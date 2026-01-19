@@ -22,7 +22,7 @@ public class CreateMedicationRequestDTO {
 
     @NotNull(message = "quantity is required")
     @Positive(message = "Quantity must be greater than 0")
-    private int quantity;
+    private Integer quantity;
 
     @NotNull(message = "Type is required")
     private MedicationType type;
@@ -34,7 +34,7 @@ public class CreateMedicationRequestDTO {
     @Future(message = "Expiry date must be in the future")
     private LocalDate expiryDate;
 
-    @NotBlank(message = "start date is required")
+    @NotNull(message = "start date is required")
     private LocalDate startDate;
     private LocalDate endDate;
 }

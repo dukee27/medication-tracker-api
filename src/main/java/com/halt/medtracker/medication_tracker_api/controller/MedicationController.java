@@ -18,6 +18,7 @@ import com.halt.medtracker.medication_tracker_api.dto.mapper.MedicationMapper;
 import com.halt.medtracker.medication_tracker_api.dto.request.CreateMedicationRequestDTO;
 import com.halt.medtracker.medication_tracker_api.dto.request.MedicationFilterRequest;
 import com.halt.medtracker.medication_tracker_api.dto.response.MedicationResponseDTO;
+
 import com.halt.medtracker.medication_tracker_api.service.MedicationService;
 
 import jakarta.validation.Valid;
@@ -45,8 +46,7 @@ public class MedicationController {
     public ResponseEntity<ApiResponse<MedicationResponseDTO>> getMedicationById(@PathVariable Long id){
             Medication med = medicationService.getMedicationById(id);
             MedicationResponseDTO response = medicationMapper.toResponse(med);
-            return ResponseEntity.ok(
-                ApiResponse.success("Fetched successfully", response));
+            return ResponseEntity.ok(ApiResponse.success("Fetched successfully", response));
     }
 
     @PostMapping("/search")

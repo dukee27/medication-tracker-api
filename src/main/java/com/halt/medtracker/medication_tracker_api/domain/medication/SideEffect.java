@@ -3,6 +3,7 @@ package com.halt.medtracker.medication_tracker_api.domain.medication;
 import java.time.LocalDateTime;
 
 import com.halt.medtracker.medication_tracker_api.constants.SeverityLevel;
+import com.halt.medtracker.medication_tracker_api.domain.base.BaseEntity;
 import com.halt.medtracker.medication_tracker_api.domain.identity.User;
 
 import jakarta.persistence.Entity;
@@ -23,7 +24,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SideEffect {
+public class SideEffect extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

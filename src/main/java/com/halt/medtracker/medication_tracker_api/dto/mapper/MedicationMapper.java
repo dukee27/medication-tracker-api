@@ -7,16 +7,19 @@ import com.halt.medtracker.medication_tracker_api.dto.response.MedicationRespons
 
 @Component
 public class MedicationMapper {
-    public MedicationResponseDTO toResponse(Medication medication){
+
+    public MedicationResponseDTO toResponse(Medication medication) {
         return MedicationResponseDTO.builder()
                 .id(medication.getId())
                 .name(medication.getName())
-                .brandName(medication.getDosage())
+                .brandName(medication.getBrandName())
+                .dosage(medication.getDosage())          
                 .type(medication.getType())
                 .quantityLeft(medication.getQuantityLeft())
                 .isActive(medication.isActive())
                 .expiryDate(medication.getExpiryDate())
                 .startDate(medication.getStartDate())
+                .endDate(medication.getEndDate())       
                 .instructions(medication.getInstructions())
                 .doctorName(medication.getDoctorName())
                 .imageUrl(medication.getImageUrl())

@@ -3,6 +3,7 @@ package com.halt.medtracker.medication_tracker_api.domain.identity;
 import java.time.LocalDate;
 
 import com.halt.medtracker.medication_tracker_api.constants.SeverityLevel;
+import com.halt.medtracker.medication_tracker_api.domain.base.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,7 +23,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Allergy {
+public class Allergy extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
