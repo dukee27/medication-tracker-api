@@ -1,6 +1,7 @@
 package com.halt.medtracker.medication_tracker_api.service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,11 +10,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.halt.medtracker.medication_tracker_api.domain.identity.User;
+import com.halt.medtracker.medication_tracker_api.domain.medication.Medication;
 import com.halt.medtracker.medication_tracker_api.domain.medication.MedicationIntakeTime;
 import com.halt.medtracker.medication_tracker_api.domain.medication.MedicationSchedule;
 import com.halt.medtracker.medication_tracker_api.dto.response.TodayMedicationResponseDTO;
 import com.halt.medtracker.medication_tracker_api.repository.MedicationIntakeTimeRepository;
-import com.halt.medtracker.medication_tracker_api.repository.MedicationRepository;
 import com.halt.medtracker.medication_tracker_api.repository.MedicationScheduleRepository;
 import com.halt.medtracker.medication_tracker_api.repository.UserRepository;
 
@@ -23,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TodayMedicationService {
 
-    private final MedicationRepository medicationRepository;
     private final UserRepository userRepository;
     private final MedicationScheduleRepository medicationScheduleRepository;
     private final MedicationIntakeTimeRepository medicationIntakeTImeRepository;
@@ -49,7 +49,36 @@ public class TodayMedicationService {
     
 
     private boolean appliesToday(MedicationSchedule schedule,LocalDate today){
-        return true; // have to add this yet
+        Medication medication = schedule.getMedication();
+        
+        if(medication.getStartDate() != null && today.isBefore(medication.getStartDate())){
+            return false;
+        }
+        if(medication.getStartDate() != null && today.isAfter(medication.getEndDate())){
+            return false;
+        }
+
+        // check for frequency status
+        switch(schedule.getFrequencyType()){
+            case DAILY:
+                return true;
+            case WEEKLY:
+                return schedule.getDayOfWeek() != null && schedule.getDayOfWeek() == today.getDayOfWeek().getValue();
+            case EVERY_N_DAYS:
+                if(schedule.getIntervalDays() != null)
+                    return false;
+                long daysBetween = 
+                    ChronoUnit.DAYS.between(
+                        medication.getStartDate(),
+                        today
+                    );
+                return daysBetween % schedule.getIntervalDays() == 0;
+            
+            case AS_NEEDED:
+                return false;
+            default:
+                return false;
+        }   
     }
     
     private TodayMedicationResponseDTO toResponse(
