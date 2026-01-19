@@ -45,7 +45,8 @@ public class MedicationController {
     public ResponseEntity<ApiResponse<MedicationResponseDTO>> getMedicationById(@PathVariable Long id){
             Medication med = medicationService.getMedicationById(id);
             MedicationResponseDTO response = medicationMapper.toResponse(med);
-            return ResponseEntity.ok(ApiResponse.success("Fetched successfully", response));
+            return ResponseEntity.ok(
+                ApiResponse.success("Fetched successfully", response));
     }
 
     @PostMapping("/search")
