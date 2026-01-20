@@ -4,11 +4,15 @@ import java.time.LocalDate;
 
 import com.halt.medtracker.medication_tracker_api.constants.MedicationStatus;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MedicationFilterRequest {
     // basic search
     private String medicineName;        // "Asp" - partial match
