@@ -9,5 +9,5 @@ import com.halt.medtracker.medication_tracker_api.domain.medication.MedicationSc
 
 @Repository
 public interface MedicationScheduleRepository extends JpaRepository<MedicationSchedule,Long> {
-    List<MedicationSchedule> findByMedication_User_Id(Long userId);
+    List<MedicationSchedule> findByMedicationUserId(Long userId);
 }

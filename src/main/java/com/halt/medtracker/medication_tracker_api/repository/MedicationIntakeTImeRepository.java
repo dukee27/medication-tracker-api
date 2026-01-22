@@ -10,6 +10,6 @@ import com.halt.medtracker.medication_tracker_api.domain.medication.MedicationIn
 @Repository
 public interface MedicationIntakeTimeRepository extends JpaRepository<MedicationIntakeTime,Long> {
 
-    List<MedicationIntakeTime> findBySchedule_Id(Long ScheduleId);
+    List<MedicationIntakeTime> findByScheduleId(Long ScheduleId);
 
 }

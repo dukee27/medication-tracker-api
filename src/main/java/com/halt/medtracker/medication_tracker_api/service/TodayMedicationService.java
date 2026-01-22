@@ -33,12 +33,12 @@ public class TodayMedicationService {
         User user = getCurrentUser();
         LocalDate today = LocalDate.now();
 
-        List<MedicationSchedule> schedules = medicationScheduleRepository.findByMedication_User_Id(user.getId());
+        List<MedicationSchedule> schedules = medicationScheduleRepository.findByMedicationUserId(user.getId());
 
         return schedules.stream()
                 .filter(schedule -> appliesToday(schedule,today))
                 .flatMap(schedule->
-                    medicationIntakeTImeRepository.findBySchedule_Id(schedule.getId())
+                    medicationIntakeTImeRepository.findByScheduleId(schedule.getId())
                     .stream()
                     .map(time -> toResponse(schedule,time))
                 )
@@ -65,7 +65,7 @@ public class TodayMedicationService {
             case WEEKLY:
                 return schedule.getDayOfWeek() != null && schedule.getDayOfWeek() == today.getDayOfWeek().getValue();
             case EVERY_N_DAYS:
-                if(schedule.getIntervalDays() != null)
+                if(schedule.getIntervalDays() == null)
                     return false;
                 long daysBetween = 
                     ChronoUnit.DAYS.between(
