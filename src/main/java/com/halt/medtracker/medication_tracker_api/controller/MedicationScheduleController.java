@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.halt.medtracker.medication_tracker_api.dto.ApiResponse;
 import com.halt.medtracker.medication_tracker_api.dto.request.CreateMedicationScheduleRequestDTO;
 import com.halt.medtracker.medication_tracker_api.dto.response.MedicationScheduleResponseDTO;
-import com.halt.medtracker.medication_tracker_api.dto.response.TodayMedicationResponseDTO;
 import com.halt.medtracker.medication_tracker_api.service.MedicationScheduleService;
-import com.halt.medtracker.medication_tracker_api.service.TodayMedicationService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/schedule")
 @RequiredArgsConstructor
 public class MedicationScheduleController {
-
-    private final TodayMedicationService todayMedicationService;
     
     private final MedicationScheduleService scheduleService;
 
@@ -35,11 +31,5 @@ public class MedicationScheduleController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Schedule created", response));
     }
-
-    // @PostMapping
-    // public ResponseEntity<ApiResponse<TodayMedicationResponseDTO>> createSchedule(
-    //     @RequestBody CreateMedicationScheduleRequest request){
-
-    //     }
 
 }

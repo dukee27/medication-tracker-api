@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.halt.medtracker.medication_tracker_api.domain.identity.User;
 import com.halt.medtracker.medication_tracker_api.domain.medication.Medication;
 import com.halt.medtracker.medication_tracker_api.domain.medication.MedicationSchedule;
-import com.halt.medtracker.medication_tracker_api.dto.request.CreateMedicationScheduleRequest;
+import com.halt.medtracker.medication_tracker_api.dto.request.CreateMedicationScheduleRequestDTO;
 import com.halt.medtracker.medication_tracker_api.dto.response.MedicationScheduleResponseDTO;
 import com.halt.medtracker.medication_tracker_api.repository.MedicationRepository;
 import com.halt.medtracker.medication_tracker_api.repository.MedicationScheduleRepository;
@@ -26,7 +26,7 @@ public class MedicationScheduleService {
 
     @Transactional
     public MedicationScheduleResponseDTO createSchedule(
-        CreateMedicationScheduleRequest request ){
+        CreateMedicationScheduleRequestDTO request ){
              User user = getCurrentUser();
 
         Medication medication = medicationRepository

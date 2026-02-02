@@ -26,7 +26,7 @@ public class TodayMedicationService {
 
     private final UserRepository userRepository;
     private final MedicationScheduleRepository medicationScheduleRepository;
-    private final MedicationIntakeTimeRepository medicationIntakeTImeRepository;
+    private final MedicationIntakeTimeRepository medicationIntakeTimeRepository;
 
     @Transactional(readOnly = true)
     public List<TodayMedicationResponseDTO> getMedicationsForToday(){
@@ -38,7 +38,7 @@ public class TodayMedicationService {
         return schedules.stream()
                 .filter(schedule -> appliesToday(schedule,today))
                 .flatMap(schedule->
-                    medicationIntakeTImeRepository.findByScheduleId(schedule.getId())
+                    medicationIntakeTimeRepository.findByScheduleId(schedule.getId())
                     .stream()
                     .map(time -> toResponse(schedule,time))
                 )
@@ -54,7 +54,7 @@ public class TodayMedicationService {
         if(medication.getStartDate() != null && today.isBefore(medication.getStartDate())){
             return false;
         }
-        if(medication.getStartDate() != null && today.isAfter(medication.getEndDate())){
+        if(medication.getEndDate() != null && today.isAfter(medication.getEndDate())){
             return false;
         }
 
@@ -65,8 +65,8 @@ public class TodayMedicationService {
             case WEEKLY:
                 return schedule.getDayOfWeek() != null && schedule.getDayOfWeek() == today.getDayOfWeek().getValue();
             case EVERY_N_DAYS:
-                if(schedule.getIntervalDays() == null)
-                    return false;
+                if(schedule.getIntervalDays() == null) return false;
+                if (medication.getStartDate() == null) return false;
                 long daysBetween = 
                     ChronoUnit.DAYS.between(
                         medication.getStartDate(),

@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Builder
-public class CreateMedicationScheduleRequest {
+public class CreateMedicationScheduleRequestDTO {
     private long medicationId;
     private FrequencyType frequencyType;
     private Integer dayOfWeek;

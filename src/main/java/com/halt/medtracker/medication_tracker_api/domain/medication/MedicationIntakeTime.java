@@ -17,5 +17,5 @@ public class MedicationIntakeTime extends BaseEntity {
     @JoinColumn(name = "schedule_id", nullable = false)
     private MedicationSchedule schedule;
 
-    private LocalTime intakeTime; // 08:00, 14:00, 21:00
+    private LocalTime intakeTime; 
 }
