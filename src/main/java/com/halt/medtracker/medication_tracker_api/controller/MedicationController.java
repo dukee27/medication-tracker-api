@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import com.halt.medtracker.medication_tracker_api.dto.ApiResponse;
 import com.halt.medtracker.medication_tracker_api.dto.mapper.MedicationMapper;
 import com.halt.medtracker.medication_tracker_api.dto.request.CreateMedicationRequestDTO;
 import com.halt.medtracker.medication_tracker_api.dto.request.MedicationFilterRequest;
+import com.halt.medtracker.medication_tracker_api.dto.request.UpdateMedicationRequest;
 import com.halt.medtracker.medication_tracker_api.dto.response.MedicationResponseDTO;
 
 import com.halt.medtracker.medication_tracker_api.service.MedicationService;
@@ -40,6 +42,16 @@ public class MedicationController {
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(ApiResponse.success("Medication added successfully", medicationResponse));
+    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<ApiResponse<MedicationResponseDTO>> updateMedication(
+        @Valid @RequestBody UpdateMedicationRequest request ,@PathVariable Long id){
+            Medication editedMedication = medicationService.editMedication(request,id);
+            MedicationResponseDTO medicationResponse = medicationMapper.toResponse(editedMedication);
+            return ResponseEntity.ok(
+                ApiResponse.success("Medication updated", medicationResponse)
+            );
+            
     }
     
     @GetMapping("/{id}")

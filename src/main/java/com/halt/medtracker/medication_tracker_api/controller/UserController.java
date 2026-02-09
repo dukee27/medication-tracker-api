@@ -24,14 +24,13 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/users")
-@RequiredArgsConstructor // this looks at final and automatically creates field for me here, not need of auto wiring
+@RequiredArgsConstructor // this looks at final and automatically creates field for me here, no need of auto wiring
 // @PreAuthorize("hasRole('USER')")
 public class UserController {
 
     
     private final UserService userService;
     private final UserMapper userMapper;
-
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<UserResponseDTO>> registerUser(
         @Valid @RequestBody CreateUserRequestDTO request) {

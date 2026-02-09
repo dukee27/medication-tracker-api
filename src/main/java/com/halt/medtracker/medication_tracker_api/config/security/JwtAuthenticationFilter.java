@@ -42,6 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     userDetails.getAuthorities()
             );
 
+            //good practice ig , adds ip and stuff , auditing(not necessary per say)
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             // Set Spring Security Context (Log them in!)

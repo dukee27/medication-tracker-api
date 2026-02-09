@@ -18,6 +18,7 @@ import com.halt.medtracker.medication_tracker_api.domain.medication.Medication;
 import com.halt.medtracker.medication_tracker_api.dto.request.CreateMedicationRequestDTO;
 import com.halt.medtracker.medication_tracker_api.dto.response.MedicationResponseDTO;
 import com.halt.medtracker.medication_tracker_api.dto.request.MedicationFilterRequest;
+import com.halt.medtracker.medication_tracker_api.dto.request.UpdateMedicationRequest;
 import com.halt.medtracker.medication_tracker_api.repository.MedicationRepository;
 import com.halt.medtracker.medication_tracker_api.repository.MedicationSpecification;
 import com.halt.medtracker.medication_tracker_api.repository.UserRepository;
@@ -54,6 +55,37 @@ public class MedicationService {
         return medicationRepository.save(medication);
                                 
     }
+
+    @Transactional
+    public Medication editMedication(UpdateMedicationRequest request,Long medId){
+        Medication medication = getMedicationById(medId);
+        if(request.getName() != null){
+            medication.setName(request.getName());
+        }
+        if(request.getDosage() != null){
+            medication.setDosage(request.getDosage());
+        }
+        if(request.getBrandName() != null){
+            medication.setBrandName(request.getBrandName());
+        }
+        if(request.getQuantity() != null){
+            medication.setQuantityLeft(request.getQuantity());
+        }
+        if(request.getEndDate() != null){
+            medication.setEndDate(request.getEndDate());
+        }
+        if(request.getExpiryDate() != null){
+            medication.setExpiryDate(request.getExpiryDate());
+        }
+        if(request.getImageUrl() != null){
+            medication.setImageUrl(request.getImageUrl());
+        }
+        if(request.getInstructions() != null){
+            medication.setInstructions(request.getInstructions());
+        }
+        return medicationRepository.save(medication);
+        
+    }   
 
     public List<Medication> getAllUserMedications(){
         User user = getCurrentUser();

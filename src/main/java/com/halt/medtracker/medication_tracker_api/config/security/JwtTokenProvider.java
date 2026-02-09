@@ -56,10 +56,10 @@ public class JwtTokenProvider {
     //  Validate Token
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder()              // 1. Use parserBuilder(), not parser()
-                .setSigningKey(key())         // 2. Set the key
-                .build()                      // 3. Build the parser
-                .parseClaimsJws(token);       // 4. Use parseClaimsJws, not just parse()
+            Jwts.parserBuilder()              //  Use parserBuilder(), not parser()
+                .setSigningKey(key())         //  Set the key
+                .build()                      //  Build the parser
+                .parseClaimsJws(token);       //  Use parseClaimsJws, not just parse()
                 
             return true;
         } catch (MalformedJwtException ex) {
@@ -72,7 +72,6 @@ public class JwtTokenProvider {
             logger.error("JWT claims string is empty: {}", ex.getMessage());
         }
         
-        // Note: SignatureException might need to be imported from io.jsonwebtoken.security
         return false;
     }
 }
