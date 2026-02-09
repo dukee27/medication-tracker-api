@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.halt.medtracker.medication_tracker_api.domain.identity.User;
 import com.halt.medtracker.medication_tracker_api.dto.request.CreateUserRequestDTO;
+import com.halt.medtracker.medication_tracker_api.dto.request.UpdateUserRequest;
+import com.halt.medtracker.medication_tracker_api.exception.ResourceNotFoundException;
 import com.halt.medtracker.medication_tracker_api.exception.UserAlreadyExistsException;
 import com.halt.medtracker.medication_tracker_api.repository.UserRepository;
 
@@ -35,6 +37,26 @@ public class UserService {
                 .build();
 
         return userRepository.save(user);
+    }
+
+    @Transactional
+    public User editUser(String email,UpdateUserRequest request){
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        
+        if (request.getFirstName() != null)
+        user.setFirstName(request.getFirstName());
+
+        if (request.getLastName() != null)
+        user.setLastName(request.getLastName());
+
+        if (request.getPhoneNumber() != null)
+        user.setPhoneNumber(request.getPhoneNumber());
+
+        if (request.getPassword() != null)
+        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        return userRepository.save(user);
+        
     }
     public Optional<User> getUserByEmail(String email){
         return userRepository.findByEmail(email);

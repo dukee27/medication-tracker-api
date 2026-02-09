@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import com.halt.medtracker.medication_tracker_api.domain.identity.User;
 import com.halt.medtracker.medication_tracker_api.dto.ApiResponse;
 import com.halt.medtracker.medication_tracker_api.dto.mapper.UserMapper;
 import com.halt.medtracker.medication_tracker_api.dto.request.CreateUserRequestDTO;
+import com.halt.medtracker.medication_tracker_api.dto.request.UpdateUserRequest;
 import com.halt.medtracker.medication_tracker_api.dto.response.UserResponseDTO;
 import com.halt.medtracker.medication_tracker_api.exception.ResourceNotFoundException;
 import com.halt.medtracker.medication_tracker_api.service.UserService;
@@ -40,7 +42,18 @@ public class UserController {
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(ApiResponse.success("User registered successfully", userResponse));
-        }
+    }
+    @PatchMapping("/me")
+    public ResponseEntity<ApiResponse<UserResponseDTO>> UpdateUser(
+        @AuthenticationPrincipal UserDetails userDetails,
+        @Valid @RequestBody UpdateUserRequest request) {
+            User updatedUser = userService.editUser(userDetails.getUsername(),request); // actually email is sent here
+            UserResponseDTO userResponse = userMapper.toResponse(updatedUser);
+
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(ApiResponse.success("User registered successfully", userResponse));
+    }
     
     
     @GetMapping("me")
