@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.halt.medtracker.medication_tracker_api.domain.identity.User;
+import com.halt.medtracker.medication_tracker_api.dto.mapper.UserMapper;
 import com.halt.medtracker.medication_tracker_api.dto.request.CreateUserRequestDTO;
 import com.halt.medtracker.medication_tracker_api.dto.request.UpdateUserRequest;
 import com.halt.medtracker.medication_tracker_api.exception.ResourceNotFoundException;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
     @Transactional
     public User createUser(CreateUserRequestDTO request){
@@ -44,21 +46,14 @@ public class UserService {
         User user = userRepository.findByEmail(email)
             .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         
-        if (request.getFirstName() != null)
-        user.setFirstName(request.getFirstName());
+        userMapper.updateEntity(user, request, passwordEncoder);
 
-        if (request.getLastName() != null)
-        user.setLastName(request.getLastName());
-
-        if (request.getPhoneNumber() != null)
-        user.setPhoneNumber(request.getPhoneNumber());
-
-        if (request.getPassword() != null)
-        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         return userRepository.save(user);
         
     }
-    public Optional<User> getUserByEmail(String email){
-        return userRepository.findByEmail(email);
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }

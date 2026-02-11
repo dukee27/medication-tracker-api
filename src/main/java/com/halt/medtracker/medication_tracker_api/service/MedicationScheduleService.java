@@ -1,5 +1,7 @@
 package com.halt.medtracker.medication_tracker_api.service;
 
+import java.util.List;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -21,64 +23,76 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class MedicationScheduleService {
-
     private final MedicationRepository medicationRepository;
     private final MedicationScheduleRepository medicationScheduleRepository;
-    private final UserRepository userRepository;
     private final MedicationScheduleMapper medicationScheduleMapper;
+
+    // ---------------- CREATE ----------------
+
     @Transactional
     public MedicationScheduleResponseDTO createSchedule(
-        CreateMedicationScheduleRequestDTO request ){
-        User user = getCurrentUser();
+            CreateMedicationScheduleRequestDTO request,
+            User subject) {
 
         Medication medication = medicationRepository
                 .findById(request.getMedicationId())
                 .orElseThrow(() -> new RuntimeException("Medication not found"));
 
-        if (!medication.getUser().getId().equals(user.getId())) {
+        if (!medication.getUser().getId().equals(subject.getId())) {
             throw new RuntimeException("Unauthorized");
         }
 
         MedicationSchedule schedule =
-            medicationScheduleMapper.toEntity(request, medication);
+                medicationScheduleMapper.toEntity(request, medication);
 
-        MedicationSchedule saved =
-            medicationScheduleRepository.save(schedule);
-
-        return medicationScheduleMapper.toResponse(saved);
+        return medicationScheduleMapper.toResponse(
+                medicationScheduleRepository.save(schedule)
+        );
     }
+
 
     @Transactional
     public MedicationScheduleResponseDTO editSchedule(
-                            Long scheduleId,
-                            UpdateScheduleRequest request ){
-
-        User user = getCurrentUser();
+            Long scheduleId,
+            UpdateScheduleRequest request,
+            User subject) {
 
         MedicationSchedule schedule = medicationScheduleRepository
-            .findById(scheduleId)
-            .orElseThrow(() -> new RuntimeException("Schedule not found"));
+                .findById(scheduleId)
+                .orElseThrow(() -> new RuntimeException("Schedule not found"));
 
-        if (!schedule.getMedication().getUser().getId().equals(user.getId())) {
+        if (!schedule.getMedication().getUser().getId().equals(subject.getId())) {
             throw new RuntimeException("Unauthorized");
         }
 
         medicationScheduleMapper.updateEntity(schedule, request);
 
-        MedicationSchedule saved =
-            medicationScheduleRepository.save(schedule);
-
-        return medicationScheduleMapper.toResponse(saved);
+        return medicationScheduleMapper.toResponse(
+                medicationScheduleRepository.save(schedule)
+        );
     }
 
-    private User getCurrentUser() {
-        String email = SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getName();
+    public List<MedicationScheduleResponseDTO> getSchedules(User subject) {
 
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return medicationScheduleRepository
+                .findByMedicationUserId(subject.getId())
+                .stream()
+                .map(medicationScheduleMapper::toResponse)
+                .toList();
+    }
+    public MedicationScheduleResponseDTO getScheduleById(
+            Long scheduleId,
+            User subject) {
+
+        MedicationSchedule schedule = medicationScheduleRepository
+                .findById(scheduleId)
+                .orElseThrow(() -> new RuntimeException("Schedule not found"));
+
+        if (!schedule.getMedication().getUser().getId().equals(subject.getId())) {
+            throw new RuntimeException("Unauthorized");
+        }
+
+        return medicationScheduleMapper.toResponse(schedule);
     }
 }
 

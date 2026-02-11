@@ -23,7 +23,7 @@ public class AccessAuthorizationService {
         }
 
         AccessControl access = accessControlRepository
-                .findByPatientAndCaregiverAndAccessGrantedTrue(patient, actor)
+                .findByPatientAndCaregiverAndAccessGrantedTrue(patient,actor)
                 .orElseThrow(() -> new RuntimeException("Access not granted"));
 
         switch (permission) {
