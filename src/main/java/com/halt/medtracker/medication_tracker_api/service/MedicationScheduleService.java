@@ -50,8 +50,9 @@ public class MedicationScheduleService {
 
     @Transactional
     public MedicationScheduleResponseDTO editSchedule(
-        Long scheduleId,
-        UpdateScheduleRequest request ){
+                            Long scheduleId,
+                            UpdateScheduleRequest request ){
+
         User user = getCurrentUser();
 
         MedicationSchedule schedule = medicationScheduleRepository
@@ -59,8 +60,9 @@ public class MedicationScheduleService {
             .orElseThrow(() -> new RuntimeException("Schedule not found"));
 
         if (!schedule.getMedication().getUser().getId().equals(user.getId())) {
-        throw new RuntimeException("Unauthorized");
-    }
+            throw new RuntimeException("Unauthorized");
+        }
+
         medicationScheduleMapper.updateEntity(schedule, request);
 
         MedicationSchedule saved =
