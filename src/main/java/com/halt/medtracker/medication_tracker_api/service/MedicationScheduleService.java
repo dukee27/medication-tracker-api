@@ -1,9 +1,6 @@
 package com.halt.medtracker.medication_tracker_api.service;
 
 import java.util.List;
-
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.halt.medtracker.medication_tracker_api.domain.identity.User;
@@ -15,8 +12,6 @@ import com.halt.medtracker.medication_tracker_api.dto.request.UpdateScheduleRequ
 import com.halt.medtracker.medication_tracker_api.dto.response.MedicationScheduleResponseDTO;
 import com.halt.medtracker.medication_tracker_api.repository.MedicationRepository;
 import com.halt.medtracker.medication_tracker_api.repository.MedicationScheduleRepository;
-import com.halt.medtracker.medication_tracker_api.repository.UserRepository;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -26,8 +21,6 @@ public class MedicationScheduleService {
     private final MedicationRepository medicationRepository;
     private final MedicationScheduleRepository medicationScheduleRepository;
     private final MedicationScheduleMapper medicationScheduleMapper;
-
-    // ---------------- CREATE ----------------
 
     @Transactional
     public MedicationScheduleResponseDTO createSchedule(

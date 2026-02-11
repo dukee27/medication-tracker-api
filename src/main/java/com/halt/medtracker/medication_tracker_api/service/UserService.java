@@ -1,7 +1,5 @@
 package com.halt.medtracker.medication_tracker_api.service;
 
-import java.util.Optional;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +17,15 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
     @Transactional
-    public User createUser(CreateUserRequestDTO request){
-        
-        if(userRepository.existsByEmail(request.getEmail())){
+    public User createUser(CreateUserRequestDTO request) {
+
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new UserAlreadyExistsException("Email already exists");
         }
 
@@ -42,18 +41,23 @@ public class UserService {
     }
 
     @Transactional
-    public User editUser(String email,UpdateUserRequest request){
-        User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        
-        userMapper.updateEntity(user, request, passwordEncoder);
+    public User updateUser(User subject, UpdateUserRequest request) {
 
-        return userRepository.save(user);
-        
+        userMapper.updateEntity(subject, request, passwordEncoder);
+
+        return userRepository.save(subject);
     }
 
     public User getUserByEmail(String email) {
+
         return userRepository.findByEmail(email)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
+    }
+
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
     }
 }

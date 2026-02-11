@@ -8,185 +8,109 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.halt.medtracker.medication_tracker_api.domain.identity.User;
 import com.halt.medtracker.medication_tracker_api.domain.medication.Medication;
+import com.halt.medtracker.medication_tracker_api.dto.mapper.MedicationMapper;
 import com.halt.medtracker.medication_tracker_api.dto.request.CreateMedicationRequestDTO;
-import com.halt.medtracker.medication_tracker_api.dto.response.MedicationResponseDTO;
 import com.halt.medtracker.medication_tracker_api.dto.request.MedicationFilterRequest;
 import com.halt.medtracker.medication_tracker_api.dto.request.UpdateMedicationRequest;
 import com.halt.medtracker.medication_tracker_api.repository.MedicationRepository;
 import com.halt.medtracker.medication_tracker_api.repository.MedicationSpecification;
-import com.halt.medtracker.medication_tracker_api.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class MedicationService {
-    
-    private final MedicationRepository medicationRepository;
-    private final UserRepository userRepository;
 
-    public Medication createMedication(CreateMedicationRequestDTO request){
-        User currentUser = getCurrentUser();
-                
-        Medication medication = Medication.builder()
-                                .user(currentUser)
-                                .name(request.getName())
-                                .brandName(request.getBrandName())
-                                .dosage(request.getDosage()) 
-                                .quantityTotal(request.getQuantity()) 
-                                .quantityLeft(request.getQuantity())
-                                .type(request.getType())
-                                .doctorName(request.getDoctorName())
-                                .instructions(request.getInstructions())
-                                .imageUrl(request.getImageUrl())
-                                .expiryDate(request.getExpiryDate())
-                                .startDate(request.getStartDate())
-                                .endDate(request.getEndDate()) 
-                                .isActive(true) 
-                                .build();
-        
+    private final MedicationRepository medicationRepository;
+    private final MedicationMapper medicationMapper;
+
+    public Medication createMedication(CreateMedicationRequestDTO request, User subject) {
+
+        Medication medication = medicationMapper.toEntity(request, subject);
         return medicationRepository.save(medication);
-                                
     }
 
     @Transactional
-    public Medication editMedication(UpdateMedicationRequest request,Long medId){
-        Medication medication = getMedicationById(medId);
-        if(request.getName() != null){
-            medication.setName(request.getName());
+    public Medication editMedication(Long medId,
+                                     UpdateMedicationRequest request,
+                                     User subject) {
+
+        Medication medication = medicationRepository.findById(medId)
+                .orElseThrow(() -> new RuntimeException("Medication not found"));
+
+        if (!medication.getUser().getId().equals(subject.getId())) {
+            throw new RuntimeException("Unauthorized access");
         }
-        if(request.getDosage() != null){
-            medication.setDosage(request.getDosage());
-        }
-        if(request.getBrandName() != null){
-            medication.setBrandName(request.getBrandName());
-        }
-        if(request.getQuantity() != null){
-            medication.setQuantityLeft(request.getQuantity());
-        }
-        if(request.getEndDate() != null){
-            medication.setEndDate(request.getEndDate());
-        }
-        if(request.getExpiryDate() != null){
-            medication.setExpiryDate(request.getExpiryDate());
-        }
-        if(request.getImageUrl() != null){
-            medication.setImageUrl(request.getImageUrl());
-        }
-        if(request.getInstructions() != null){
-            medication.setInstructions(request.getInstructions());
-        }
+
+        medicationMapper.updateEntity(medication, request);
+
         return medicationRepository.save(medication);
-        
-    }   
-
-    public List<Medication> getAllUserMedications(){
-        User user = getCurrentUser();
-        return medicationRepository.findByUserId(user.getId());
     }
 
-    public Medication getMedicationById(Long medId){
-        User user = getCurrentUser();
+    public Medication getMedicationById(Long medId, User subject) {
 
-        Medication med = medicationRepository.findById(medId)
-                        .orElseThrow(()->new RuntimeException("medication not found"));
-        
-        if(!med.getUser().getId().equals(user.getId())){
-            throw new RuntimeException("Unauthorized access to medication");
+        Medication medication = medicationRepository.findById(medId)
+                .orElseThrow(() -> new RuntimeException("Medication not found"));
+
+        if (!medication.getUser().getId().equals(subject.getId())) {
+            throw new RuntimeException("Unauthorized access");
         }
-        return med;
+
+        return medication;
     }
 
-    private User getCurrentUser(){
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByEmail(email)
-                                .orElseThrow(()->new UsernameNotFoundException("User not found"));
+    public List<Medication> getAllUserMedications(User subject) {
+        return medicationRepository.findByUserId(subject.getId());
     }
 
     @Transactional(readOnly = true)
-    public Page<MedicationResponseDTO> filterMedication(MedicationFilterRequest filter){
+    public Page<Medication> filterMedication(User subject,
+                                             MedicationFilterRequest filter) {
 
-        User user = getCurrentUser();
-        Specification<Medication> spec = MedicationSpecification.dynamicFilter(user.getId(),filter);
+        Specification<Medication> spec =
+                MedicationSpecification.dynamicFilter(subject.getId(), filter);
 
         Pageable pageable = PageRequest.of(
                 filter.getPage() != null ? filter.getPage() : 0,
                 filter.getPageSize() != null ? filter.getPageSize() : 10,
                 Sort.by("startDate").descending()
         );
-        
-        Page<Medication>  medications = medicationRepository.findAll(spec,pageable);
 
-        return medications.map(this::toResponse);
+        return medicationRepository.findAll(spec, pageable);
     }
 
     @Transactional(readOnly = true)
-    public List<MedicationResponseDTO> getLowStockReport(){
+    public List<Medication> getLowStockReport(User subject) {
 
-        User user = getCurrentUser();
         MedicationFilterRequest filter = MedicationFilterRequest.builder()
                 .isActive(true)
                 .isLowStock(true)
-                .sortBy("startDate")
-                .sortOrder("ASC")
                 .build();
-        
-                Specification<Medication> spec = MedicationSpecification.dynamicFilter(user.getId(), filter);
-        
-        return medicationRepository.findAll(spec).stream()
-                .map(this::toResponse)
-                .toList();
+
+        Specification<Medication> spec =
+                MedicationSpecification.dynamicFilter(subject.getId(), filter);
+
+        return medicationRepository.findAll(spec);
     }
 
     @Transactional(readOnly = true)
-    public List<MedicationResponseDTO> getExpiryReport() {
-        
-        User user = getCurrentUser();
-        LocalDate DaysFromNow = LocalDate.now().plusDays(30);
+    public List<Medication> getExpiryReport(User subject) {
+
+        LocalDate daysFromNow = LocalDate.now().plusDays(30);
 
         MedicationFilterRequest filter = MedicationFilterRequest.builder()
                 .isActive(true)
-                .expiryDateBefore(DaysFromNow) 
-                .sortBy("expiryDate") 
-                .sortOrder("ASC")
+                .expiryDateBefore(daysFromNow)
                 .build();
 
-        Specification<Medication> spec = MedicationSpecification.dynamicFilter(user.getId(), filter);
+        Specification<Medication> spec =
+                MedicationSpecification.dynamicFilter(subject.getId(), filter);
 
-        return medicationRepository.findAll(spec).stream()
-                .map(this::toResponse)
-                .toList();
-    }
-
-    private MedicationResponseDTO toResponse(Medication med){
-        return MedicationResponseDTO.builder()
-                .id(med.getId())
-            
-                .name(med.getName())  
-                
-                .brandName(med.getBrandName())
-                .dosage(med.getDosage())
-                .type(med.getType())           
-                
-                .startDate(med.getStartDate())
-                .endDate(med.getEndDate())     
-                
-                .doctorName(med.getDoctorName()) 
-                
-                .isActive(med.isActive())
-                .quantityLeft(med.getQuantityLeft())
-                .expiryDate(med.getExpiryDate())
-                
-                .instructions(med.getInstructions()) 
-                .imageUrl(med.getImageUrl())         
-                
-                .build();
+        return medicationRepository.findAll(spec);
     }
 }

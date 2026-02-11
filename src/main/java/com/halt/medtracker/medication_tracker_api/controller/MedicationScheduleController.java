@@ -1,6 +1,5 @@
 package com.halt.medtracker.medication_tracker_api.controller;
 
-import java.security.Permission;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -37,8 +36,6 @@ public class MedicationScheduleController {
     private final SubjectResolver subjectResolver;
     private final UserService userService;
 
-    // ---------------- CREATE ----------------
-
     @PostMapping
     public ResponseEntity<ApiResponse<MedicationScheduleResponseDTO>>
     createSchedule(
@@ -60,8 +57,6 @@ public class MedicationScheduleController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Schedule created", response));
     }
-
-    // ---------------- UPDATE ----------------
 
     @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<MedicationScheduleResponseDTO>>
@@ -87,8 +82,6 @@ public class MedicationScheduleController {
         );
     }
 
-    // ---------------- GET ALL ----------------
-
     @GetMapping
     public ResponseEntity<ApiResponse<List<MedicationScheduleResponseDTO>>>
     getSchedules(
@@ -110,8 +103,6 @@ public class MedicationScheduleController {
                 ApiResponse.success("Schedules fetched", response)
         );
     }
-
-    // ---------------- GET BY ID ----------------
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<MedicationScheduleResponseDTO>>

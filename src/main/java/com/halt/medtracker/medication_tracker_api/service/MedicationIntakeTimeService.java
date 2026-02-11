@@ -2,6 +2,7 @@ package com.halt.medtracker.medication_tracker_api.service;
 
 import org.springframework.stereotype.Service;
 
+import com.halt.medtracker.medication_tracker_api.domain.identity.User;
 import com.halt.medtracker.medication_tracker_api.domain.medication.MedicationIntakeTime;
 import com.halt.medtracker.medication_tracker_api.domain.medication.MedicationSchedule;
 import com.halt.medtracker.medication_tracker_api.dto.mapper.MedicationIntakeTimeMapper;
@@ -17,33 +18,54 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class MedicationIntakeTimeService {
+
     private final MedicationScheduleRepository scheduleRepository;
     private final MedicationIntakeTimeRepository intakeTimeRepository;
     private final MedicationIntakeTimeMapper intakeTimeMapper;
 
     @Transactional
-    public void addIntakeTime(CreateMedicationIntakeTimeRequestDTO request) {
+    public MedicationIntakeTimeResponseDTO addIntakeTime(
+            CreateMedicationIntakeTimeRequestDTO request,
+            User subject) {
 
         MedicationSchedule schedule = scheduleRepository
                 .findById(request.getScheduleId())
                 .orElseThrow(() -> new RuntimeException("Schedule not found"));
 
-        MedicationIntakeTime intakeTime = MedicationIntakeTime.builder()
-                .schedule(schedule)
-                .intakeTime(request.getIntakeTime())
-                .build();
+        // Ownership enforcement
+        if (!schedule.getMedication().getUser().getId()
+                .equals(subject.getId())) {
+            throw new RuntimeException("Unauthorized");
+        }
 
-        intakeTimeRepository.save(intakeTime);
+        MedicationIntakeTime intakeTime =
+                intakeTimeMapper.toEntity(request, schedule);
+
+        MedicationIntakeTime saved =
+                intakeTimeRepository.save(intakeTime);
+
+        return intakeTimeMapper.toResponse(saved);
     }
-    
+
     @Transactional
     public MedicationIntakeTimeResponseDTO updateIntakeTime(
             Long intakeTimeId,
-            UpdateInTakeTimeRequest request) {
+            UpdateInTakeTimeRequest request,
+            User subject) {
 
-        MedicationIntakeTime intakeTime = intakeTimeRepository
-                .findById(intakeTimeId)
-                .orElseThrow(() -> new RuntimeException("Intake time not found"));
+        MedicationIntakeTime intakeTime =
+                intakeTimeRepository.findById(intakeTimeId)
+                        .orElseThrow(() ->
+                                new RuntimeException("Intake time not found"));
+
+        // Ownership enforcement
+        if (!intakeTime.getSchedule()
+                .getMedication()
+                .getUser()
+                .getId()
+                .equals(subject.getId())) {
+            throw new RuntimeException("Unauthorized");
+        }
 
         intakeTimeMapper.updateEntity(intakeTime, request);
 
