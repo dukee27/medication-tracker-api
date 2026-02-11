@@ -1,5 +1,6 @@
 package com.halt.medtracker.medication_tracker_api.domain.access;
 
+import com.halt.medtracker.medication_tracker_api.constants.AccessStatus;
 import com.halt.medtracker.medication_tracker_api.constants.RelationshipType;
 import com.halt.medtracker.medication_tracker_api.domain.base.BaseEntity;
 import com.halt.medtracker.medication_tracker_api.domain.identity.User;
@@ -26,9 +27,10 @@ public class AccessControl extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private RelationshipType relationship;
 
+    @Enumerated(EnumType.STRING)
+    private AccessStatus status; 
+
     private boolean canViewMeds;
     private boolean canEditMeds;
     private boolean canViewHistory;
-    
-    private boolean accessGranted;
 }
