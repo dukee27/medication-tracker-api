@@ -3,6 +3,7 @@ package com.halt.medtracker.medication_tracker_api.service;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
+import com.halt.medtracker.medication_tracker_api.constants.AccessStatus;
 import com.halt.medtracker.medication_tracker_api.constants.Permissions;
 import com.halt.medtracker.medication_tracker_api.domain.access.AccessControl;
 
@@ -23,7 +24,11 @@ public class AccessAuthorizationService {
         }
 
         AccessControl access = accessControlRepository
-                .findByPatientAndCaregiverAndAccessGrantedTrue(patient,actor)
+                .findByPatientAndCaregiverAndStatus(
+                        patient,
+                        actor,
+                        AccessStatus.APPROVED
+                )
                 .orElseThrow(() -> new RuntimeException("Access not granted"));
 
         switch (permission) {

@@ -11,10 +11,6 @@ import com.halt.medtracker.medication_tracker_api.domain.identity.User;
 
 @Repository
 public interface AccessControlRepository extends JpaRepository<AccessControl,Long>{
-    Optional<AccessControl> findByPatientAndCaregiverAndAccessGrantedTrue(
-            User patient,
-            User caregiver
-    );
 
     Optional<AccessControl> findByPatientAndCaregiverAndStatus(
         User patient,
