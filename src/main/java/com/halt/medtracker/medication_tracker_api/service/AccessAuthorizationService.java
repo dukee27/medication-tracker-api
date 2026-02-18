@@ -3,10 +3,11 @@ package com.halt.medtracker.medication_tracker_api.service;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.AccessDeniedException;
+
 import com.halt.medtracker.medication_tracker_api.constants.AccessStatus;
 import com.halt.medtracker.medication_tracker_api.constants.Permissions;
 import com.halt.medtracker.medication_tracker_api.domain.access.AccessControl;
-
 import com.halt.medtracker.medication_tracker_api.domain.identity.User;
 import com.halt.medtracker.medication_tracker_api.repository.AccessControlRepository;
 
@@ -29,25 +30,27 @@ public class AccessAuthorizationService {
                         actor,
                         AccessStatus.APPROVED
                 )
-                .orElseThrow(() -> new RuntimeException("Access not granted"));
+                .orElseThrow(() ->
+                        new AccessDeniedException("Access not granted")
+                );
 
         switch (permission) {
 
-            // profile related 
+            // Profile related
             case PROFILE_VIEW -> {
                 if (!access.isCanViewHistory()) {
-                    throw new RuntimeException("Not allowed to view profile");
+                    throw new AccessDeniedException("Not allowed to view profile");
                 }
             }
 
             case PROFILE_EDIT -> {
-                throw new RuntimeException("Caregivers cannot edit profile");
+                throw new AccessDeniedException("Caregivers cannot edit profile");
             }
 
-            // meds
+            // Medication
             case MEDICATION_VIEW -> {
                 if (!access.isCanViewMeds()) {
-                    throw new RuntimeException("Not allowed to view medications");
+                    throw new AccessDeniedException("Not allowed to view medications");
                 }
             }
 
@@ -55,14 +58,14 @@ public class AccessAuthorizationService {
                  MEDICATION_EDIT,
                  MEDICATION_DELETE -> {
                 if (!access.isCanEditMeds()) {
-                    throw new RuntimeException("Not allowed to modify medications");
+                    throw new AccessDeniedException("Not allowed to modify medications");
                 }
             }
 
-            // schedule
+            // Schedule
             case SCHEDULE_VIEW -> {
                 if (!access.isCanViewMeds()) {
-                    throw new RuntimeException("Not allowed to view schedules");
+                    throw new AccessDeniedException("Not allowed to view schedules");
                 }
             }
 
@@ -70,14 +73,14 @@ public class AccessAuthorizationService {
                  SCHEDULE_EDIT,
                  SCHEDULE_DELETE -> {
                 if (!access.isCanEditMeds()) {
-                    throw new RuntimeException("Not allowed to modify schedules");
+                    throw new AccessDeniedException("Not allowed to modify schedules");
                 }
             }
 
-            // intake time
+            // Intake time
             case INTAKE_TIME_VIEW -> {
                 if (!access.isCanViewMeds()) {
-                    throw new RuntimeException("Not allowed to view intake times");
+                    throw new AccessDeniedException("Not allowed to view intake times");
                 }
             }
 
@@ -85,11 +88,11 @@ public class AccessAuthorizationService {
                  INTAKE_TIME_EDIT,
                  INTAKE_TIME_DELETE -> {
                 if (!access.isCanEditMeds()) {
-                    throw new RuntimeException("Not allowed to modify intake times");
+                    throw new AccessDeniedException("Not allowed to modify intake times");
                 }
             }
 
-            default -> throw new RuntimeException("Unknown permission");
+            default -> throw new AccessDeniedException("Unknown permission");
         }
     }
 }

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import com.halt.medtracker.medication_tracker_api.constants.Permissions;
 import com.halt.medtracker.medication_tracker_api.domain.identity.User;
+import com.halt.medtracker.medication_tracker_api.exception.ResourceNotFoundException;
 import com.halt.medtracker.medication_tracker_api.repository.UserRepository;
 
 @Service
@@ -24,7 +25,7 @@ public class SubjectResolver {
         }
 
         User patient = userRepository.findById(patientId)
-                .orElseThrow(() -> new RuntimeException("Patient not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
 
         authorizationService.authorize(actor, patient, permission);
 
