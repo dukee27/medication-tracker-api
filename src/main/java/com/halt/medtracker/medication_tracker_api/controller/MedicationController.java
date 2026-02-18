@@ -93,6 +93,28 @@ public class MedicationController {
                 ));
     }
 
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<MedicationResponseDTO>>> getAllMedications(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(required = false) Long patientId) {
+
+        User actor = userService.getUserByEmail(userDetails.getUsername());
+
+        User subject = subjectResolver.resolveSubject(
+                actor,
+                patientId,
+                Permissions.MEDICATION_VIEW
+        );
+
+        List<MedicationResponseDTO> result = medicationService.getAllUserMedications(subject)
+                .stream()
+                .map(medicationMapper::toResponse)
+                .toList();
+
+        return ResponseEntity.ok(
+                ApiResponse.success("All medications fetched successfully", result)
+        );
+    }
     
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<MedicationResponseDTO>> getMedicationById(

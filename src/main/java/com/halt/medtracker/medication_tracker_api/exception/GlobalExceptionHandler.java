@@ -1,8 +1,10 @@
 package com.halt.medtracker.medication_tracker_api.exception;
 
-import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException; 
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,13 @@ import com.halt.medtracker.medication_tracker_api.dto.ApiResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAuthenticationException(AuthenticationException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED) // Returns 401 instead of 403
+                .body(ApiResponse.error(ex.getMessage())); // shows "Bad credentials" or "User not found"
+    }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleResourceNotFound(ResourceNotFoundException ex){
@@ -50,7 +59,6 @@ public class GlobalExceptionHandler {
         Map<String,String> errors = new HashMap<>();
 
         ex.getBindingResult().getAllErrors().forEach((error)->{
-            // have to downcast here , since object field is not enough 
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName,errorMessage);

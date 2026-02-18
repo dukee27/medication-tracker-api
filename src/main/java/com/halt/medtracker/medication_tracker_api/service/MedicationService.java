@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import com.halt.medtracker.medication_tracker_api.dto.mapper.MedicationMapper;
 import com.halt.medtracker.medication_tracker_api.dto.request.CreateMedicationRequestDTO;
 import com.halt.medtracker.medication_tracker_api.dto.request.MedicationFilterRequest;
 import com.halt.medtracker.medication_tracker_api.dto.request.UpdateMedicationRequest;
+import com.halt.medtracker.medication_tracker_api.exception.ResourceNotFoundException;
 import com.halt.medtracker.medication_tracker_api.repository.MedicationRepository;
 import com.halt.medtracker.medication_tracker_api.repository.MedicationSpecification;
 
@@ -41,10 +43,10 @@ public class MedicationService {
                                      User subject) {
 
         Medication medication = medicationRepository.findById(medId)
-                .orElseThrow(() -> new RuntimeException("Medication not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Medication not found"));
 
         if (!medication.getUser().getId().equals(subject.getId())) {
-            throw new RuntimeException("Unauthorized access");
+            throw new AccessDeniedException("Unauthorized access: You do not own this medication record");
         }
 
         medicationMapper.updateEntity(medication, request);
@@ -55,10 +57,10 @@ public class MedicationService {
     public Medication getMedicationById(Long medId, User subject) {
 
         Medication medication = medicationRepository.findById(medId)
-                .orElseThrow(() -> new RuntimeException("Medication not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Medication not found"));
 
         if (!medication.getUser().getId().equals(subject.getId())) {
-            throw new RuntimeException("Unauthorized access");
+            throw new AccessDeniedException("Unauthorized access to this medication");
         }
 
         return medication;

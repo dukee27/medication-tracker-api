@@ -1,6 +1,8 @@
 package com.halt.medtracker.medication_tracker_api.config;
 
 import com.halt.medtracker.medication_tracker_api.config.security.JwtAuthenticationFilter;
+
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,11 +34,19 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/error").permitAll()
                 .requestMatchers("/api/v1/auth/**", "/api/v1/users/register").permitAll() // Public
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()         // Swagger Public
                 .anyRequest().authenticated()                                             // Everything else Private
             )
             
+            .exceptionHandling(exception -> exception
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setContentType("application/json");
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("{\"status\":\"error\",\"message\":\"Unauthorized: " + authException.getMessage() + "\"}");
+                })
+            )
             // Add our custom JWT filter BEFORE the standard UsernamePassword filter
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -52,5 +62,6 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
-    }
+    }  
+
 }
